@@ -14,6 +14,9 @@ import { variants } from '@components/tweet/tweet';
 import { TweetActions } from '@components/tweet/tweet-actions';
 import { TweetStats } from '@components/tweet/tweet-stats';
 import { TweetDate } from '@components/tweet/tweet-date';
+import { TweetText } from '@components/tweet/tweet-text';
+import { ToneTagList } from '@components/tweet/tone-tags';
+import { ContentWarning } from '@components/tweet/content-warning';
 import { Input } from '@components/input/input';
 import type { RefObject } from 'react';
 import type { User } from '@lib/types/user';
@@ -36,6 +39,8 @@ export function ViewTweet(tweet: ViewTweetProps): JSX.Element {
     userRetweets,
     userReplies,
     viewTweetRef,
+    toneTags,
+    contentWarning,
     user: tweetUserData
   } = tweet;
 
@@ -127,16 +132,21 @@ export function ViewTweet(tweet: ViewTweetProps): JSX.Element {
         </p>
       )}
       <div>
-        {text && (
-          <p className='whitespace-pre-line break-words text-2xl'>{text}</p>
-        )}
-        {images && (
-          <ImagePreview
-            viewTweet
-            imagesPreview={images}
-            previewCount={images.length}
-          />
-        )}
+        <ToneTagList tags={toneTags} className='mb-3' />
+        <ContentWarning warning={contentWarning}>
+          {text && (
+            <div className='text-2xl'>
+              <TweetText text={text} />
+            </div>
+          )}
+          {images && (
+            <ImagePreview
+              viewTweet
+              imagesPreview={images}
+              previewCount={images.length}
+            />
+          )}
+        </ContentWarning>
         <div
           className='inner:hover-animation inner:border-b inner:border-light-border
                      dark:inner:border-dark-border'
@@ -146,7 +156,6 @@ export function ViewTweet(tweet: ViewTweetProps): JSX.Element {
             viewTweet
             reply={reply}
             userId={userId}
-            isOwner={isOwner}
             tweetId={tweetId}
             userLikes={userLikes}
             userRetweets={userRetweets}

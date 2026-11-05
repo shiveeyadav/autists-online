@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import cn from 'clsx';
 import { useArrayDocument } from '@lib/hooks/useArrayDocument';
 import { useModal } from '@lib/hooks/useModal';
 import { usersCollection } from '@lib/firebase/collections';
@@ -56,7 +55,7 @@ export function ViewTweetStats({
 
   const allStats: Readonly<Stats[]> = [
     ['Reply', null, replyMove, currentReplies],
-    ['Retweet', 'retweets', tweetMove, currentTweets],
+    ['Repost', 'retweets', tweetMove, currentTweets],
     ['Like', 'likes', likeMove, currentLikes]
   ];
 
@@ -80,34 +79,45 @@ export function ViewTweetStats({
       {isStatsVisible && (
         <div
           className='flex gap-4 px-1 py-4 text-light-secondary dark:text-dark-secondary
-                     [&>button>div]:font-bold [&>button>div]:text-light-primary 
-                     dark:[&>button>div]:text-dark-primary'
+                     [&>*>div]:font-bold [&>*>div]:text-light-primary
+                     dark:[&>*>div]:text-dark-primary'
         >
-          {allStats.map(
-            ([title, type, move, stats], index) =>
-              !!stats && (
-                <button
-                  className={cn(
-                    `hover-animation mt-0.5 mb-[3px] flex h-4 items-center gap-1 border-b 
-                     border-b-transparent outline-none hover:border-b-light-primary 
-                     focus-visible:border-b-light-primary dark:hover:border-b-dark-primary
-                     dark:focus-visible:border-b-dark-primary`,
-                    index === 0 && 'cursor-not-allowed'
-                  )}
+          {allStats.map(([title, type, move, stats], index) => {
+            if (!stats) return null;
+
+            const label =
+              stats === 1
+                ? title
+                : index === 0
+                ? `${title.slice(0, -1)}ies`
+                : `${title}s`;
+
+            // the reply count is information only; replies are listed below
+            if (!type)
+              return (
+                <div
+                  className='mt-0.5 mb-[3px] flex h-4 items-center gap-1'
                   key={title}
-                  onClick={type ? handleOpen(type) : undefined}
                 >
                   <NumberStats move={move} stats={stats} />
-                  <p>{`${
-                    stats === 1
-                      ? title
-                      : stats > 1 && index === 0
-                      ? `${title.slice(0, -1)}ies`
-                      : `${title}s`
-                  }`}</p>
-                </button>
-              )
-          )}
+                  <p>{label}</p>
+                </div>
+              );
+
+            return (
+              <button
+                className='hover-animation mt-0.5 mb-[3px] flex h-4 items-center gap-1 border-b
+                           border-b-transparent outline-none hover:border-b-light-primary
+                           focus-visible:border-b-light-primary dark:hover:border-b-dark-primary
+                           dark:focus-visible:border-b-dark-primary'
+                key={title}
+                onClick={handleOpen(type)}
+              >
+                <NumberStats move={move} stats={stats} />
+                <p>{label}</p>
+              </button>
+            );
+          })}
         </div>
       )}
     </>

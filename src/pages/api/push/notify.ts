@@ -4,9 +4,8 @@ import {
   adminMessaging,
   isAdminConfigured
 } from '@lib/firebase/admin';
+import { siteName, siteURL } from '@lib/site';
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-const siteURL = process.env.NEXT_PUBLIC_URL ?? 'https://thealternative.social';
 
 const copy: Record<string, string> = {
   like: 'liked your post',
@@ -100,7 +99,7 @@ export default async function handler(
     {
       tokens,
       data: {
-        title: 'The Alternative',
+        title: siteName,
         body: `${sender?.name ?? 'Someone'} ${copy[type] ?? 'interacted with you'}`,
         icon: sender?.photoURL ?? '',
         tag: `${type}__${fromUserId}`,

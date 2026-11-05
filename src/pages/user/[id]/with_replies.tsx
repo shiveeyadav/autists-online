@@ -13,6 +13,7 @@ import { Tweet } from '@components/tweet/tweet';
 import { Loading } from '@components/ui/loading';
 import { StatsEmpty } from '@components/tweet/stats-empty';
 import { TweetWithParent } from '@components/tweet/tweet-with-parent';
+import { siteName } from '@lib/site';
 import type { ReactElement, ReactNode } from 'react';
 
 export default function UserWithReplies(): JSX.Element {
@@ -41,16 +42,16 @@ export default function UserWithReplies(): JSX.Element {
   return (
     <section>
       <SEO
-        title={`Tweets with replies by ${name as string} (@${
+        title={`Posts and replies by ${name as string} (@${
           username as string
-        }) / The Alternative`}
+        }) / ${siteName}`}
       />
       {loading ? (
         <Loading className='mt-5' />
       ) : !data ? (
         <StatsEmpty
-          title={`@${username as string} hasn't tweeted`}
-          description='When they do, their Tweets will show up here.'
+          title={`@${username as string} has not posted yet`}
+          description='Posts and replies by this person will be listed here.'
         />
       ) : (
         <AnimatePresence mode='popLayout'>

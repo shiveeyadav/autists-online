@@ -1,5 +1,3 @@
-@use 'fonts';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -29,6 +27,58 @@
     --accent-purple: 120 87 255;
     --accent-orange: 255 122 0;
     --accent-green: 0 184 122;
+
+    /* Only fonts already on the device: nothing to download, no flash. */
+    --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans',
+      Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* Dyslexia-friendly: fonts with distinct letter shapes that are commonly
+     installed (or installed by people who want them), plus more spacing. */
+  html[data-font='dyslexia'] {
+    --font-body: 'OpenDyslexic', 'Atkinson Hyperlegible', 'Lexend', Verdana,
+      Tahoma, 'Trebuchet MS', sans-serif;
+  }
+
+  html[data-font='dyslexia'] body {
+    letter-spacing: 0.02em;
+    word-spacing: 0.08em;
+    line-height: 1.6;
+  }
+
+  /* Tailwind sizes are in rem, so the root size scales the whole interface. */
+  html[data-text-size='small'] {
+    font-size: 93.75%;
+  }
+
+  html[data-text-size='large'] {
+    font-size: 112.5%;
+  }
+
+  html[data-text-size='larger'] {
+    font-size: 125%;
+  }
+
+  /* Calm mode: softer backgrounds and lower-saturation accent colours. */
+  html[data-calm='true'] {
+    --dark-background: 27 30 34;
+    --dim-background: 31 39 47;
+    --light-background: 249 248 245;
+
+    --dark-search-background: 40 44 49;
+    --dim-search-background: 42 52 62;
+    --light-search-background: 237 238 235;
+
+    --dark-sidebar-background: 33 37 42;
+    --dim-sidebar-background: 36 45 54;
+    --light-sidebar-background: 243 242 238;
+
+    --accent-yellow: 176 152 84;
+    --accent-blue: 74 128 150;
+    --accent-pink: 170 104 132;
+    --accent-purple: 124 112 170;
+    --accent-orange: 178 124 84;
+    --accent-green: 78 140 112;
   }
 
   a,
@@ -39,7 +89,8 @@
   }
 
   body {
-    @apply hover-animation bg-main-background font-twitter-chirp text-light-primary dark:text-dark-primary;
+    @apply hover-animation bg-main-background text-light-primary dark:text-dark-primary;
+    font-family: var(--font-body);
   }
 }
 
@@ -92,4 +143,26 @@
            [box-shadow:#65778633_0px_0px_15px,_#65778626_0px_0px_3px_1px] 
            dark:[box-shadow:#ffffff33_0px_0px_15px,_#ffffff26_0px_0px_3px_1px];
   }
+}
+
+/* Movement is switched off when the operating system asks for it, and always
+   in calm mode. framer-motion is handled separately by <MotionConfig>. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html[data-calm='true'] *,
+html[data-calm='true'] *::before,
+html[data-calm='true'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }

@@ -13,6 +13,7 @@ import { StatsEmpty } from '@components/tweet/stats-empty';
 import { Loading } from '@components/ui/loading';
 import { Tweet } from '@components/tweet/tweet';
 import { SEO } from '@components/common/seo';
+import { siteName, pageTitle } from '@lib/site';
 import type { ReactElement, ReactNode } from 'react';
 import type { GetServerSideProps } from 'next';
 
@@ -119,8 +120,8 @@ export default function UserTweets({
         <Loading className='mt-5' />
       ) : !mergedTweets ? (
         <StatsEmpty
-          title={`@${username as string} hasn't tweeted`}
-          description='When they do, their Tweets will show up here.'
+          title={`@${username as string} has not posted yet`}
+          description='Posts by this person will be listed here.'
         />
       ) : (
         <AnimatePresence mode='popLayout'>
@@ -149,10 +150,10 @@ UserTweets.getLayout = (page: ReactElement): ReactNode => {
     <PublicLayout>
       {preview && (
         <SEO
-          title={`${preview.name} (@${preview.username}) / The Alternative`}
+          title={pageTitle(`${preview.name} (@${preview.username})`)}
           description={
             preview.bio ??
-            `${preview.name} (@${preview.username}) on The Alternative.`
+            `${preview.name} (@${preview.username}) on ${siteName}.`
           }
           image={preview.photoURL ?? undefined}
         />

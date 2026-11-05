@@ -15,16 +15,19 @@ import {
 import { useAuth } from '@lib/context/auth-context';
 import { sleep } from '@lib/utils';
 import { getImagesData } from '@lib/validation';
+import { MAX_TONE_TAGS, MAX_CONTENT_WARNING } from '@lib/tone-tags';
 import { UserAvatar } from '@components/user/user-avatar';
 import { InputForm, fromTop } from './input-form';
 import { ImagePreview } from './image-preview';
 import { InputOptions } from './input-options';
+import { InputExtras } from './input-extras';
 import type { ReactNode, FormEvent, ChangeEvent, ClipboardEvent } from 'react';
 import type { WithFieldValue } from 'firebase/firestore';
 import type { Variants } from 'framer-motion';
 import type { User } from '@lib/types/user';
 import type { Tweet } from '@lib/types/tweet';
 import type { FilesWithId, ImagesPreview, ImageData } from '@lib/types/file';
+import type { ToneTag } from '@lib/tone-tags';
 
 type InputProps = {
   modal?: boolean;
@@ -55,6 +58,10 @@ export function Input({
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [visited, setVisited] = useState(false);
+  const [warningOpen, setWarningOpen] = useState(false);
+  const [contentWarning, setContentWarning] = useState('');
+  const [tonesOpen, setTonesOpen] = useState(false);
+  const [selectedTones, setSelectedTones] = useState<ToneTag[]>([]);
 
   const { user, isAdmin } = useAuth();
   const { name, username, photoURL } = user as User;
@@ -91,7 +98,12 @@ export function Input({
       createdAt: serverTimestamp(),
       updatedAt: null,
       userReplies: 0,
-      userRetweets: []
+      userRetweets: [],
+      contentWarning:
+        warningOpen && contentWarning.trim()
+          ? contentWarning.trim().slice(0, MAX_CONTENT_WARNING)
+          : null,
+      toneTags: selectedTones.slice(0, MAX_TONE_TAGS)
     };
 
     await sleep(500);
@@ -118,7 +130,7 @@ export function Input({
     toast.success(
       () => (
         <span className='flex gap-2'>
-          Your Post was sent
+          Your post was published
           <Link href={`/tweet/${tweetId}`}>
             <a className='custom-underline font-bold'>View</a>
           </Link>
@@ -146,7 +158,7 @@ export function Input({
     });
 
     if (!imagesData) {
-      toast.error('Please choose a GIF or photo up to 4');
+      toast.error('You can add up to 4 photos, GIFs or videos to a post.');
       return;
     }
 
@@ -179,6 +191,10 @@ export function Input({
   const discardTweet = (): void => {
     setInputValue('');
     setVisited(false);
+    setWarningOpen(false);
+    setContentWarning('');
+    setTonesOpen(false);
+    setSelectedTones([]);
     cleanImage();
 
     inputRef.current?.blur();
@@ -194,6 +210,27 @@ export function Input({
   };
 
   const handleFocus = (): void => setVisited(!loading);
+
+  const toggleWarning = (): void => {
+    setVisited(true);
+    setWarningOpen(!warningOpen);
+  };
+
+  const toggleTones = (): void => {
+    setVisited(true);
+    setTonesOpen(!tonesOpen);
+  };
+
+  const handleWarningChange = ({
+    target: { value }
+  }: ChangeEvent<HTMLInputElement>): void => setContentWarning(value);
+
+  const toggleTone = (tag: ToneTag): void =>
+    setSelectedTones(
+      selectedTones.includes(tag)
+        ? selectedTones.filter((selected) => selected !== tag)
+        : [...selectedTones, tag].slice(0, MAX_TONE_TAGS)
+    );
 
   const formId = useId();
 
@@ -232,7 +269,7 @@ export function Input({
           </Link>
         </motion.p>
       )}
-      <label
+      <div
         className={cn(
           'hover-animation grid w-full grid-cols-[auto,1fr] gap-3 px-4 py-3',
           reply
@@ -242,7 +279,6 @@ export function Input({
             : 'border-b-2 border-light-border dark:border-dark-border',
           (disabled || loading) && 'pointer-events-none opacity-50'
         )}
-        htmlFor={formId}
       >
         <UserAvatar src={photoURL} alt={name} username={username} />
         <div className='flex w-full flex-col gap-4'>
@@ -271,6 +307,17 @@ export function Input({
               />
             )}
           </InputForm>
+          {!loading && (
+            <InputExtras
+              formId={formId}
+              warningOpen={warningOpen}
+              tonesOpen={tonesOpen}
+              contentWarning={contentWarning}
+              selectedTones={selectedTones}
+              handleWarningChange={handleWarningChange}
+              toggleTone={toggleTone}
+            />
+          )}
           <AnimatePresence initial={false}>
             {(reply ? reply && visited && !loading : !loading) && (
               <InputOptions
@@ -279,13 +326,17 @@ export function Input({
                 inputLimit={inputLimit}
                 inputLength={inputLength}
                 isValidTweet={isValidTweet}
+                warningOpen={warningOpen}
+                tonesOpen={tonesOpen}
                 isCharLimitExceeded={isCharLimitExceeded}
+                toggleWarning={toggleWarning}
+                toggleTones={toggleTones}
                 handleImageUpload={handleImageUpload}
               />
             )}
           </AnimatePresence>
         </div>
-      </label>
+      </div>
     </form>
   );
 }

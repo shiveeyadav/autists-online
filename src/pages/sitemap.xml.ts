@@ -1,6 +1,5 @@
+import { siteURL } from '@lib/site';
 import type { GetServerSideProps } from 'next';
-
-const siteURL = process.env.NEXT_PUBLIC_URL ?? 'https://thealternative.social';
 
 /** Sitemaps cap at 50,000 URLs; stay well under and stay fast. */
 const MAX_PROFILES = 2000;
@@ -50,7 +49,8 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
 
   const entries: Entry[] = [
     { loc: `${siteURL}/`, priority: '1.0' },
-    { loc: `${siteURL}/trends`, priority: '0.5' },
+    { loc: `${siteURL}/welcome`, priority: '0.6' },
+    { loc: `${siteURL}/guidelines`, priority: '0.6' },
     { loc: `${siteURL}/people`, priority: '0.5' }
   ];
 

@@ -4,7 +4,7 @@ import { useWindow } from '@lib/context/window-context';
 import { useModal } from '@lib/hooks/useModal';
 import { Modal } from '@components/modal/modal';
 import { Input } from '@components/input/input';
-import { CustomIcon } from '@components/ui/custom-icon';
+import { Logo } from '@components/brand/logo';
 import { HeroIcon } from '@components/ui/hero-icon';
 import { Button } from '@components/ui/button';
 import { SidebarLink } from './sidebar-link';
@@ -27,12 +27,6 @@ const navLinks: Readonly<NavLink[]> = [
     iconName: 'HomeIcon'
   },
   {
-    href: '/trends',
-    linkName: 'Explore',
-    iconName: 'HashtagIcon',
-    canBeHidden: true
-  },
-  {
     href: '/notifications',
     linkName: 'Notifications',
     iconName: 'BellIcon'
@@ -48,25 +42,37 @@ const navLinks: Readonly<NavLink[]> = [
     linkName: 'People',
     iconName: 'UserGroupIcon',
     canBeHidden: true
+  },
+  {
+    href: '/guidelines',
+    linkName: 'Guidelines',
+    iconName: 'BookOpenIcon',
+    canBeHidden: true
   }
 ];
 
 /**
  * Shown to signed-out visitors, who typically arrive on a profile or post
- * from a search engine. Only the publicly browsable pages appear; everything
+ * from a search engine. Only the publicly readable pages appear; everything
  * else needs an account.
  */
 const publicNavLinks: Readonly<NavLink[]> = [
   {
-    href: '/trends',
-    linkName: 'Explore',
-    iconName: 'HashtagIcon',
+    href: '/welcome',
+    linkName: 'Welcome',
+    iconName: 'InformationCircleIcon',
     canBeHidden: true
   },
   {
     href: '/people',
     linkName: 'People',
     iconName: 'UserGroupIcon',
+    canBeHidden: true
+  },
+  {
+    href: '/guidelines',
+    linkName: 'Guidelines',
+    iconName: 'BookOpenIcon',
     canBeHidden: true
   }
 ];
@@ -100,14 +106,13 @@ export function Sidebar(): JSX.Element {
       >
         <section className='flex flex-col justify-center gap-2 xs:items-center xl:items-stretch'>
           <h1 className='hidden xs:flex'>
-            <Link href={user ? '/home' : '/'}>
-              <a
-                className='custom-button main-tab text-accent-blue transition hover:bg-light-primary/10 
-                           focus-visible:bg-accent-blue/10 focus-visible:!ring-accent-blue/80
-                           dark:text-twitter-icon dark:hover:bg-dark-primary/10'
-              >
-                <CustomIcon className='h-7 w-7' iconName='TwitterIcon' />
-              </a>
+            <Link
+              href={user ? '/home' : '/'}
+              className='custom-button main-tab transition hover:bg-light-primary/10
+                         focus-visible:bg-main-accent/10 focus-visible:!ring-main-accent/80
+                         dark:hover:bg-dark-primary/10'
+            >
+              <Logo iconClassName='h-8 w-8' />
             </Link>
           </h1>
           <nav className='flex items-center justify-around xs:flex-col xs:justify-center xl:block'>
@@ -133,10 +138,11 @@ export function Sidebar(): JSX.Element {
                            text-center text-lg font-bold text-white outline-none transition hover:brightness-90
                            active:brightness-75 xs:static xs:translate-y-0 xl:w-11/12'
               >
-                <span className='hidden xl:block'>Log in</span>
+                <span className='hidden xl:block'>Sign in</span>
                 {/* narrow screens get a sign-in icon — showing the site logo
                     here read as decoration rather than a way to log in */}
                 <span className='block xl:hidden'>
+                  <span className='sr-only'>Sign in</span>
                   <HeroIcon
                     className='h-6 w-6'
                     iconName='ArrowRightOnRectangleIcon'
@@ -152,11 +158,11 @@ export function Sidebar(): JSX.Element {
                        xs:hover:bg-main-accent/90 xs:active:bg-main-accent/75 xl:w-11/12'
             onClick={openModal}
           >
-            <CustomIcon
+            <HeroIcon
               className='block h-6 w-6 xl:hidden'
-              iconName='FeatherIcon'
+              iconName='PencilSquareIcon'
             />
-            <p className='hidden xl:block'>Post</p>
+            <span className='sr-only xl:not-sr-only'>Write a post</span>
           </Button>
           )}
         </section>

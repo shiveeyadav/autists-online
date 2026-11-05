@@ -12,6 +12,7 @@ import { UserHomeLayout } from '@components/layout/user-home-layout';
 import { Tweet } from '@components/tweet/tweet';
 import { Loading } from '@components/ui/loading';
 import { StatsEmpty } from '@components/tweet/stats-empty';
+import { siteName } from '@lib/site';
 import type { ReactElement, ReactNode } from 'react';
 
 export default function UserMedia(): JSX.Element {
@@ -33,17 +34,16 @@ export default function UserMedia(): JSX.Element {
   return (
     <section>
       <SEO
-        title={`Media Tweets by ${name as string} (@${
+        title={`Posts with photos or videos by ${name as string} (@${
           username as string
-        }) / The Alternative`}
+        }) / ${siteName}`}
       />
       {loading ? (
         <Loading className='mt-5' />
       ) : !sortedTweets ? (
         <StatsEmpty
-          title={`@${username as string} hasn't Tweeted Media`}
-          description='Once they do, those Tweets will show up here.'
-          imageData={{ src: '/assets/no-media.png', alt: 'No media' }}
+          title={`@${username as string} has not posted any photos or videos`}
+          description='Posts with photos or videos will be listed here.'
         />
       ) : (
         <AnimatePresence mode='popLayout'>

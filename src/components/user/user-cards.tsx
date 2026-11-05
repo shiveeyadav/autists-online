@@ -23,26 +23,22 @@ type NoStatsData = Record<CombinedTypes, StatsEmptyProps>;
 
 const allNoStatsData: Readonly<NoStatsData> = {
   retweets: {
-    title: 'Amplify Posts you like',
-    imageData: { src: '/assets/no-retweets.png', alt: 'No reposts' },
+    title: 'Nobody has reposted this post',
     description:
-      "Share someone else's Post on your timeline by Reposting it. When you do, it'll show up here."
+      'When someone reposts this post, their name will be listed here.'
   },
   likes: {
-    title: 'No Post Likes yet',
-    imageData: { src: '/assets/no-likes.png', alt: 'No likes' },
-    description: "When you like a Post, it'll show up here."
+    title: 'Nobody has liked this post',
+    description: 'When someone likes this post, their name will be listed here.'
   },
   following: {
-    title: 'Be in the know',
+    title: 'This account does not follow anyone',
     description:
-      "Following accounts is an easy way to curate your timeline and know what's happening with the topics and people you're interested in."
+      'Accounts that this person follows will be listed here. To find people to follow, open the People page.'
   },
   followers: {
-    title: 'Looking for followers?',
-    imageData: { src: '/assets/no-followers.png', alt: 'No followers' },
-    description:
-      "When someone follows this account, they'll show up here. Posting and interacting with others helps boost followers."
+    title: 'This account has no followers',
+    description: 'People who follow this account will be listed here.'
   }
 };
 

@@ -1,9 +1,8 @@
 import { createTransport } from 'nodemailer';
 import { createHmac } from 'crypto';
 import { adminAuth, adminDb, isAdminConfigured } from '@lib/firebase/admin';
+import { siteName, siteURL, brandColor } from '@lib/site';
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-const siteURL = process.env.NEXT_PUBLIC_URL ?? 'https://thealternative.social';
 
 /**
  * Applied to accounts that have never chosen a frequency.
@@ -46,6 +45,7 @@ type PostForEmail = {
   id: string;
   text: string | null;
   imageCount: number;
+  contentWarning: string | null;
   authorName: string;
   authorUsername: string;
 };
@@ -59,17 +59,20 @@ function renderEmail(
 
   const subject =
     posts.length === 1
-      ? `1 new post on The Alternative ${period}`
-      : `${posts.length} new posts on The Alternative ${period}`;
+      ? `1 new post on ${siteName} ${period}`
+      : `${posts.length} new posts on ${siteName} ${period}`;
 
   const items = posts
-    .map(({ id, text, imageCount, authorName, authorUsername }) => {
-      const body = text
+    .map(({ id, text, contentWarning, imageCount, authorName, authorUsername }) => {
+      // posts with a content warning show only the warning, as on the site
+      const body = contentWarning
+        ? `<em>Content warning: ${escapeHtml(contentWarning)}. Open the post to read it.</em>`
+        : text
         ? escapeHtml(text.length > 220 ? `${text.slice(0, 220)}…` : text)
         : '<em>No text</em>';
 
       const images =
-        imageCount > 0
+        imageCount > 0 && !contentWarning
           ? ` <span style="color:#687684">(${imageCount} image${
               imageCount > 1 ? 's' : ''
             })</span>`
@@ -81,7 +84,7 @@ function renderEmail(
             authorUsername
           )}</span></div>
         <div style="margin:4px 0 8px;color:#14171a;line-height:1.5">${body}${images}</div>
-        <a href="${siteURL}/tweet/${id}" style="color:#1da1f2;text-decoration:none">Read post →</a>
+        <a href="${siteURL}/tweet/${id}" style="color:${brandColor};text-decoration:underline">Read the post</a>
       </td></tr>`;
     })
     .join('');
@@ -89,26 +92,30 @@ function renderEmail(
   const html = `<div style="margin:0;padding:24px;background:#f5f8fa;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">
     <table role="presentation" style="max-width:560px;margin:0 auto;background:#fff;border-radius:12px;padding:24px" width="100%">
       <tr><td>
-        <h1 style="margin:0 0 4px;font-size:20px;color:#14171a">The Alternative</h1>
-        <p style="margin:0 0 16px;color:#687684;font-size:14px">Here's what you missed ${period}.</p>
+        <h1 style="margin:0 0 4px;font-size:20px;color:#14171a">${siteName}</h1>
+        <p style="margin:0 0 16px;color:#687684;font-size:14px">These are the new posts from ${period}.</p>
       </td></tr>
       ${items}
       <tr><td style="padding-top:20px">
-        <a href="${siteURL}/home" style="display:inline-block;background:#1da1f2;color:#fff;padding:10px 20px;border-radius:9999px;text-decoration:none;font-weight:600">Open The Alternative</a>
+        <a href="${siteURL}/home" style="display:inline-block;background:${brandColor};color:#fff;padding:10px 20px;border-radius:9999px;text-decoration:none;font-weight:600">Open ${siteName}</a>
       </td></tr>
       <tr><td style="padding-top:24px;color:#687684;font-size:12px;line-height:1.5">
-        You asked to receive these round-ups from The Alternative.<br>
+        You receive this email because you turned on email round-ups on ${siteName}.<br>
         <a href="${unsubUrl}" style="color:#687684">Unsubscribe from these emails</a>
         ${postalAddress ? `<br><br>${escapeHtml(postalAddress)}` : ''}
       </td></tr>
     </table></div>`;
 
   const text = [
-    `Here's what you missed ${period} on The Alternative.`,
+    `These are the new posts on ${siteName} from ${period}.`,
     '',
     ...posts.map(
-      ({ id, text: body, authorName, authorUsername }) =>
-        `${authorName} (@${authorUsername}): ${body ?? 'No text'}\n${siteURL}/tweet/${id}`
+      ({ id, text: body, contentWarning, authorName, authorUsername }) =>
+        `${authorName} (@${authorUsername}): ${
+          contentWarning
+            ? `[Content warning: ${contentWarning}]`
+            : body ?? 'No text'
+        }\n${siteURL}/tweet/${id}`
     ),
     '',
     `Unsubscribe: ${unsubUrl}`,
@@ -159,7 +166,7 @@ export default async function handler(
     ? { host, port, secure: port === 465, auth: { user, pass } }
     : { service: 'Gmail', auth: { user, pass } };
 
-  const fromName = process.env.EMAIL_FROM_NAME ?? 'The Alternative';
+  const fromName = process.env.EMAIL_FROM_NAME || siteName;
 
   // With a relay like Resend the SMTP username is not an address ("resend"),
   // so the visible sender is configured separately.
@@ -194,6 +201,7 @@ export default async function handler(
     images: unknown[] | null;
     parent: unknown | null;
     createdBy: string;
+    contentWarning?: string | null;
   };
 
   // replies are conversation noise in a digest — only top-level posts
@@ -213,12 +221,13 @@ export default async function handler(
 
   const posts: PostForEmail[] = tweets
     .slice(0, MAX_POSTS_PER_EMAIL)
-    .map(({ id, text, images, createdBy }) => {
+    .map(({ id, text, images, createdBy, contentWarning }) => {
       const author = usersById.get(createdBy);
       return {
         id,
         text: text ?? null,
         imageCount: images?.length ?? 0,
+        contentWarning: contentWarning ?? null,
         authorName: (author?.name as string) ?? 'Someone',
         authorUsername: (author?.username as string) ?? 'unknown'
       };

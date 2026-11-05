@@ -1,5 +1,5 @@
 import { Dialog } from '@headlessui/react';
-import { CustomIcon } from '@components/ui/custom-icon';
+import { Logo } from '@components/brand/logo';
 import { Button } from '@components/ui/button';
 import type { ReactNode, FormEvent } from 'react';
 
@@ -14,14 +14,15 @@ type UsernameModalProps = {
 
 const usernameModalData = [
   {
-    title: 'What should we call you?',
-    description: 'Your @username is unique. You can always change it later.',
-    cancelLabel: 'Skip'
+    title: 'Choose your username',
+    description:
+      'Your username is shown as @username and is part of your profile address. Nobody else can have the same username. You can change it later.',
+    cancelLabel: 'Keep the username I was given'
   },
   {
-    title: 'Change your username?',
+    title: 'Change your username',
     description:
-      'Your @username is unique. You can always change it here again.',
+      'Your username is shown as @username and is part of your profile address. Nobody else can have the same username.',
     cancelLabel: 'Cancel'
   }
 ] as const;
@@ -43,9 +44,7 @@ export function UsernameModal({
     >
       <div className='flex flex-col gap-6'>
         <div className='flex flex-col gap-4'>
-          <i className='mx-auto'>
-            <CustomIcon className='h-10 w-10' iconName='TwitterIcon' />
-          </i>
+          <Logo className='mx-auto' iconClassName='h-10 w-10' />
           <div className='flex flex-col gap-2'>
             <Dialog.Title className='text-2xl font-bold xs:text-3xl sm:text-4xl'>
               {title}

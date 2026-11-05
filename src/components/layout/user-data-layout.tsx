@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { query, where, limit } from 'firebase/firestore';
 import { UserContextProvider } from '@lib/context/user-context';
+import { pageTitle } from '@lib/site';
 import { useCollection } from '@lib/hooks/useCollection';
 import { usersCollection } from '@lib/firebase/collections';
 import { SEO } from '@components/common/seo';
@@ -26,7 +27,7 @@ export function UserDataLayout({ children }: LayoutProps): JSX.Element {
 
   return (
     <UserContextProvider value={{ user, loading }}>
-      {!user && !loading && <SEO title='User not found / The Alternative' />}
+      {!user && !loading && <SEO title={pageTitle('Account not found')} />}
       <MainContainer>
         <MainHeader useActionButton action={back}>
           <UserHeader />

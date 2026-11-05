@@ -25,7 +25,7 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage(({ data }) => {
   if (!data) return;
 
-  self.registration.showNotification(data.title ?? 'The Alternative', {
+  self.registration.showNotification(data.title ?? 'Autists Online', {
     body: data.body ?? '',
     icon: data.icon || '/favicon.ico',
     badge: '/favicon.ico',

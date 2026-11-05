@@ -1,10 +1,8 @@
 import { useEffect } from 'react';
 import TextArea from 'react-textarea-autosize';
-import { motion } from 'framer-motion';
 import { useModal } from '@lib/hooks/useModal';
 import { Modal } from '@components/modal/modal';
 import { ActionModal } from '@components/modal/action-modal';
-import { HeroIcon } from '@components/ui/hero-icon';
 import { Button } from '@components/ui/button';
 import type {
   ReactNode,
@@ -108,8 +106,6 @@ export function InputForm({
     closeModal();
   };
 
-  const isVisibilityShown = visited && !reply && !replyModal && !loading;
-
   return (
     <div className='flex min-h-[48px] w-full flex-col justify-center gap-4'>
       <Modal
@@ -118,27 +114,15 @@ export function InputForm({
         closeModal={closeModal}
       >
         <ActionModal
-          title='Discard Post?'
-          description='This can’t be undone and you’ll lose your draft.'
+          title='Delete this draft?'
+          description='The text you wrote will be deleted. This cannot be undone.'
           mainBtnClassName='bg-accent-red hover:bg-accent-red/90 active:bg-accent-red/75'
-          mainBtnLabel='Discard'
+          mainBtnLabel='Delete draft'
           action={handleClose}
           closeModal={closeModal}
         />
       </Modal>
       <div className='flex flex-col gap-6'>
-        {isVisibilityShown && (
-          <motion.button
-            type='button'
-            className='custom-button accent-tab accent-bg-tab flex cursor-not-allowed items-center gap-1
-                       self-start border border-light-line-reply py-0 px-3 text-main-accent
-                       hover:bg-main-accent/10 active:bg-main-accent/20 dark:border-light-secondary'
-            {...fromTop}
-          >
-            <p className='font-bold'>Everyone</p>
-            <HeroIcon className='h-4 w-4' iconName='ChevronDownIcon' />
-          </motion.button>
-        )}
         <div className='flex items-center gap-3'>
           <TextArea
             id={formId}
@@ -146,7 +130,10 @@ export function InputForm({
                        placeholder:text-light-secondary dark:placeholder:text-dark-secondary'
             value={inputValue}
             placeholder={
-              reply || replyModal ? 'Post your reply' : "What's happening?"
+              reply || replyModal ? 'Write your reply' : 'Write a post'
+            }
+            aria-label={
+              reply || replyModal ? 'Write your reply' : 'Write a post'
             }
             onBlur={handleShowHideNav(true)}
             minRows={loading ? 1 : modal && !isUploadingImages ? 3 : 1}
@@ -168,21 +155,6 @@ export function InputForm({
         </div>
       </div>
       {children}
-      {isVisibilityShown && (
-        <motion.div
-          className='flex border-b border-light-border pb-2 dark:border-dark-border'
-          {...fromBottom}
-        >
-          <button
-            type='button'
-            className='custom-button accent-tab accent-bg-tab flex cursor-not-allowed items-center gap-1 py-0
-                       px-3 text-main-accent hover:bg-main-accent/10 active:bg-main-accent/20'
-          >
-            <HeroIcon className='h-4 w-4' iconName='GlobeAmericasIcon' />
-            <p className='font-bold'>Everyone can reply</p>
-          </button>
-        </motion.div>
-      )}
     </div>
   );
 }

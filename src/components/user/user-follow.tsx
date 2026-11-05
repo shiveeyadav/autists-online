@@ -4,6 +4,7 @@ import { useCollection } from '@lib/hooks/useCollection';
 import { usersCollection } from '@lib/firebase/collections';
 import { SEO } from '@components/common/seo';
 import { UserCards } from '@components/user/user-cards';
+import { siteName } from '@lib/site';
 import type { User } from '@lib/types/user';
 
 type UserFollowProps = {
@@ -31,7 +32,7 @@ export function UserFollow({ type }: UserFollowProps): JSX.Element {
       <SEO
         title={`People ${
           type === 'following' ? 'followed by' : 'following'
-        } ${name} (@${username}) / The Alternative`}
+        } ${name} (@${username}) / ${siteName}`}
       />
       <UserCards follow data={data} type={type} loading={loading} />
     </>

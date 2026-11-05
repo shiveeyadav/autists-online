@@ -17,7 +17,8 @@ export function AuthLayout({ children }: LayoutProps): JSX.Element {
 
       if (user) {
         await sleep(500);
-        void replace('/home');
+        // new accounts are sent to the welcome page once
+        void replace(user.welcomed === false ? '/welcome' : '/home');
       } else if (!loading) {
         await sleep(500);
         setPending(false);

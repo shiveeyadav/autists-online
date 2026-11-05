@@ -29,6 +29,7 @@ import { Button } from '@components/ui/button';
 import { ToolTip } from '@components/ui/tooltip';
 import { HeroIcon } from '@components/ui/hero-icon';
 import { Loading } from '@components/ui/loading';
+import { pageTitle } from '@lib/site';
 import type { ReactElement, ReactNode } from 'react';
 import type { User } from '@lib/types/user';
 
@@ -99,25 +100,25 @@ export default function Notifications(): JSX.Element {
   const handleClear = async (): Promise<void> => {
     await clearAllNotifications(userId);
     closeModal();
-    toast.success('Successfully cleared all notifications');
+    toast.success('All notifications were deleted');
   };
 
   const loading = notificationsLoading || sendersLoading;
 
   return (
     <MainContainer>
-      <SEO title='Notifications / The Alternative' />
+      <SEO title={pageTitle('Notifications')} />
       <Modal
         modalClassName='max-w-xs bg-main-background w-full p-8 rounded-2xl'
         open={open}
         closeModal={closeModal}
       >
         <ActionModal
-          title='Clear all notifications?'
-          description='This can’t be undone and you’ll remove all of your notifications.'
+          title='Delete all notifications?'
+          description='All of your notifications will be deleted. This cannot be undone.'
           mainBtnClassName='bg-accent-red hover:bg-accent-red/90 active:bg-accent-red/75 accent-tab
                             focus-visible:bg-accent-red/90'
-          mainBtnLabel='Clear'
+          mainBtnLabel='Delete all'
           action={handleClear}
           closeModal={closeModal}
         />
@@ -154,7 +155,7 @@ export default function Notifications(): JSX.Element {
             <HeroIcon className='h-5 w-5' iconName='ArchiveBoxXMarkIcon' />
             <ToolTip
               className='!-translate-x-20 translate-y-3 md:-translate-x-1/2'
-              tip='Clear notifications'
+              tip='Delete all notifications'
             />
           </Button>
         </div>
@@ -170,8 +171,8 @@ export default function Notifications(): JSX.Element {
           <Loading className='mt-5' />
         ) : !notifications?.length ? (
           <StatsEmpty
-            title='Nothing to see here — yet'
-            description='When someone likes or replies to your posts, or follows you, it’ll show up here.'
+            title='You have no notifications'
+            description='When someone likes your post, replies to your post or follows you, a notification will be listed here.'
           />
         ) : (
           <AnimatePresence mode='popLayout'>

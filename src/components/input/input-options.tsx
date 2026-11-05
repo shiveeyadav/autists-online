@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { motion } from 'framer-motion';
+import cn from 'clsx';
 import { Button } from '@components/ui/button';
 import { HeroIcon } from '@components/ui/hero-icon';
 import { ToolTip } from '@components/ui/tooltip';
@@ -8,56 +9,27 @@ import { ProgressBar } from './progress-bar';
 import type { ChangeEvent, ClipboardEvent } from 'react';
 import type { IconName } from '@components/ui/hero-icon';
 
-type Options = {
-  name: string;
-  iconName: IconName;
-  disabled: boolean;
-  onClick?: () => void;
-}[];
-
-const options: Readonly<Options> = [
-  {
-    name: 'Media',
-    iconName: 'PhotoIcon',
-    disabled: false
-  },
-  {
-    name: 'GIF',
-    iconName: 'GifIcon',
-    disabled: true
-  },
-  {
-    name: 'Poll',
-    iconName: 'ChartBarIcon',
-    disabled: true
-  },
-  {
-    name: 'Emoji',
-    iconName: 'FaceSmileIcon',
-    disabled: true
-  },
-  {
-    name: 'Schedule',
-    iconName: 'CalendarDaysIcon',
-    disabled: true
-  },
-  {
-    name: 'Location',
-    iconName: 'MapPinIcon',
-    disabled: true
-  }
-];
-
 type InputOptionsProps = {
   reply?: boolean;
   modal?: boolean;
   inputLimit: number;
   inputLength: number;
   isValidTweet: boolean;
+  warningOpen: boolean;
+  tonesOpen: boolean;
   isCharLimitExceeded: boolean;
+  toggleWarning: () => void;
+  toggleTones: () => void;
   handleImageUpload: (
     e: ChangeEvent<HTMLInputElement> | ClipboardEvent<HTMLTextAreaElement>
   ) => void;
+};
+
+type Option = {
+  label: string;
+  iconName: IconName;
+  pressed?: boolean;
+  onClick: () => void;
 };
 
 export function InputOptions({
@@ -66,26 +38,38 @@ export function InputOptions({
   inputLimit,
   inputLength,
   isValidTweet,
+  warningOpen,
+  tonesOpen,
   isCharLimitExceeded,
+  toggleWarning,
+  toggleTones,
   handleImageUpload
 }: InputOptionsProps): JSX.Element {
   const inputFileRef = useRef<HTMLInputElement>(null);
 
-  const onClick = (): void => inputFileRef.current?.click();
-
-  let filteredOptions = options;
-
-  if (reply)
-    filteredOptions = filteredOptions.filter(
-      (_, index) => ![2, 4].includes(index)
-    );
+  const options: Readonly<Option[]> = [
+    {
+      label: 'Add photos or videos',
+      iconName: 'PhotoIcon',
+      onClick: (): void => inputFileRef.current?.click()
+    },
+    {
+      label: warningOpen ? 'Remove content warning' : 'Add a content warning',
+      iconName: 'ExclamationTriangleIcon',
+      pressed: warningOpen,
+      onClick: toggleWarning
+    },
+    {
+      label: tonesOpen ? 'Hide tone tags' : 'Add tone tags',
+      iconName: 'TagIcon',
+      pressed: tonesOpen,
+      onClick: toggleTones
+    }
+  ];
 
   return (
     <motion.div className='flex justify-between' {...variants}>
-      <div
-        className='flex text-main-accent xs:[&>button:nth-child(n+6)]:hidden 
-                   md:[&>button]:!block [&>button:nth-child(n+4)]:hidden'
-      >
+      <div className='flex text-main-accent'>
         <input
           className='hidden'
           type='file'
@@ -94,25 +78,27 @@ export function InputOptions({
           ref={inputFileRef}
           multiple
         />
-        {filteredOptions.map(({ name, iconName, disabled }, index) => (
+        {options.map(({ label, iconName, pressed, onClick }) => (
           <Button
-            className='accent-tab accent-bg-tab group relative rounded-full p-2 
-                       hover:bg-main-accent/10 active:bg-main-accent/20'
-            onClick={index === 0 ? onClick : undefined}
-            disabled={disabled}
-            key={name}
+            className={cn(
+              `accent-tab accent-bg-tab group relative rounded-full p-2
+               hover:bg-main-accent/10 active:bg-main-accent/20`,
+              pressed && 'bg-main-accent/10'
+            )}
+            onClick={onClick}
+            aria-label={label}
+            aria-pressed={pressed}
+            key={iconName}
           >
             <HeroIcon className='h-5 w-5' iconName={iconName} />
-            <ToolTip tip={name} modal={modal} />
+            <ToolTip tip={label} modal={modal} />
           </Button>
         ))}
       </div>
       <div className='flex items-center gap-4'>
         <motion.div
           className='flex items-center gap-4'
-          animate={
-            inputLength ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }
-          }
+          animate={inputLength ? { opacity: 1 } : { opacity: 0 }}
         >
           <ProgressBar
             modal={modal}
@@ -120,19 +106,6 @@ export function InputOptions({
             inputLength={inputLength}
             isCharLimitExceeded={isCharLimitExceeded}
           />
-          {!reply && (
-            <>
-              <i className='hidden h-8 w-[1px] bg-[#B9CAD3] dark:bg-[#3E4144] xs:block' />
-              <Button
-                className='group relative hidden rounded-full border border-light-line-reply p-[1px]
-                           text-main-accent dark:border-light-secondary xs:block'
-                disabled
-              >
-                <HeroIcon className='h-5 w-5' iconName='PlusIcon' />
-                <ToolTip tip='Add' modal={modal} />
-              </Button>
-            </>
-          )}
         </motion.div>
         <Button
           type='submit'

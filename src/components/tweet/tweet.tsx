@@ -16,6 +16,8 @@ import { TweetStatus } from './tweet-status';
 import { TweetStats } from './tweet-stats';
 import { TweetDate } from './tweet-date';
 import { TweetText } from './tweet-text';
+import { ToneTagList } from './tone-tags';
+import { ContentWarning } from './content-warning';
 import type { Variants } from 'framer-motion';
 import type { Tweet } from '@lib/types/tweet';
 import type { User } from '@lib/types/user';
@@ -49,6 +51,8 @@ export function Tweet(tweet: TweetProps): JSX.Element {
     parentTweet,
     userReplies,
     userRetweets,
+    toneTags,
+    contentWarning,
     user: tweetUserData
   } = tweet;
 
@@ -107,7 +111,7 @@ export function Tweet(tweet: TweetProps): JSX.Element {
             <AnimatePresence initial={false}>
               {modal ? null : pinned ? (
                 <TweetStatus type='pin'>
-                  <p className='text-sm font-bold'>Pinned Post</p>
+                  <p className='text-sm font-bold'>Pinned post</p>
                 </TweetStatus>
               ) : (
                 tweetIsRetweeted && (
@@ -174,8 +178,9 @@ export function Tweet(tweet: TweetProps): JSX.Element {
                   </Link>
                 </p>
               )}
-              {text && <TweetText text={text} />}
-              <div className='mt-1 flex flex-col gap-2'>
+              <ToneTagList tags={toneTags} className='my-1' />
+              <ContentWarning warning={contentWarning} className='mt-1'>
+                {text && <TweetText text={text} />}
                 {images && (
                   <ImagePreview
                     tweet
@@ -183,11 +188,12 @@ export function Tweet(tweet: TweetProps): JSX.Element {
                     previewCount={images.length}
                   />
                 )}
+              </ContentWarning>
+              <div className='mt-1 flex flex-col gap-2'>
                 {!modal && (
                   <TweetStats
                     reply={reply}
                     userId={userId}
-                    isOwner={isOwner}
                     tweetId={tweetId}
                     userLikes={userLikes}
                     userReplies={userReplies}

@@ -11,6 +11,7 @@ import { UserHomeLayout } from '@components/layout/user-home-layout';
 import { Tweet } from '@components/tweet/tweet';
 import { Loading } from '@components/ui/loading';
 import { StatsEmpty } from '@components/tweet/stats-empty';
+import { siteName } from '@lib/site';
 import type { ReactElement, ReactNode } from 'react';
 
 export default function UserLikes(): JSX.Element {
@@ -32,14 +33,14 @@ export default function UserLikes(): JSX.Element {
       <SEO
         title={`Posts liked by ${name as string} (@${
           username as string
-        }) / The Alternative`}
+        }) / ${siteName}`}
       />
       {loading ? (
         <Loading className='mt-5' />
       ) : !data ? (
         <StatsEmpty
-          title={`@${username as string} hasn't liked any Posts`}
-          description='When they do, those Posts will show up here.'
+          title={`@${username as string} has not liked any posts`}
+          description='Posts this person likes will be listed here.'
         />
       ) : (
         <AnimatePresence mode='popLayout'>

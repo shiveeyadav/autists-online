@@ -26,7 +26,11 @@ import {
 } from './collections';
 import type { WithFieldValue, Query } from 'firebase/firestore';
 import type { Notification, NotificationType } from '@lib/types/notification';
-import type { EditableUserData, EmailDigestFrequency } from '@lib/types/user';
+import type {
+  User,
+  EditableUserData,
+  EmailDigestFrequency
+} from '@lib/types/user';
 import type { FilesWithId, ImagesPreview } from '@lib/types/file';
 import type { Bookmark } from '@lib/types/bookmark';
 import type { Theme, Accent } from '@lib/types/theme';
@@ -49,13 +53,18 @@ export async function getCollectionCount<T>(
 
 export async function updateUserData(
   userId: string,
-  userData: EditableUserData
+  userData: EditableUserData & Pick<User, 'commPrefs'>
 ): Promise<void> {
   const userRef = doc(usersCollection, userId);
   await updateDoc(userRef, {
     ...userData,
     updatedAt: serverTimestamp()
   });
+}
+
+/** Records that a new account has seen /welcome, so it is not shown again. */
+export async function markWelcomed(userId: string): Promise<void> {
+  await updateDoc(doc(usersCollection, userId), { welcomed: true });
 }
 
 export async function updateUserTheme(

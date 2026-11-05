@@ -14,8 +14,9 @@ import { MainHeader } from '@components/home/main-header';
 import { MainContainer } from '@components/home/main-container';
 import { UserCard } from '@components/user/user-card';
 import { Loading } from '@components/ui/loading';
-import { Error } from '@components/ui/error';
-import { variants } from '@components/aside/aside-trends';
+import { StatsEmpty } from '@components/tweet/stats-empty';
+import { variants } from '@components/aside/aside-about';
+import { pageTitle } from '@lib/site';
 import type { ReactElement, ReactNode } from 'react';
 
 export default function People(): JSX.Element {
@@ -32,13 +33,16 @@ export default function People(): JSX.Element {
 
   return (
     <MainContainer>
-      <SEO title='People / The Alternative' />
+      <SEO title={pageTitle('People')} />
       <MainHeader useActionButton title='People' action={back} />
       <section>
         {loading ? (
           <Loading className='mt-5' />
         ) : !data ? (
-          <Error message='Something went wrong' />
+          <StatsEmpty
+            title='There is nobody else here yet'
+            description='When other people create an account, they will be listed here.'
+          />
         ) : (
           <>
             <motion.div className='mt-0.5' {...variants}>

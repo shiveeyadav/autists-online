@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import cn from 'clsx';
 import { preventBubbling } from '@lib/utils';
+import { useSettings } from '@lib/context/settings-context';
 import { Button } from '@components/ui/button';
 import { HeroIcon } from '@components/ui/hero-icon';
 import { Loading } from '@components/ui/loading';
@@ -36,6 +37,9 @@ export function ImageModal({
 }: ImageModalProps): JSX.Element {
   const [indexes, setIndexes] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // calm mode: videos never start by themselves
+  const { calmMode } = useSettings();
 
   const { src, alt, type } = imageData;
 
@@ -118,7 +122,7 @@ export function ImageModal({
                     loading ? 'hidden' : 'block'
                   )}
                   src={src}
-                  autoPlay
+                  autoPlay={!calmMode}
                   controls
                   onClick={preventBubbling()}
                 >

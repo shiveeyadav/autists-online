@@ -36,7 +36,7 @@ export function UpdateUsername(): JSX.Element {
       if (empty) setAvailable(true);
       else {
         setAvailable(false);
-        setErrorMessage('This username has been taken. Please choose another.');
+        setErrorMessage('Someone else already has this username. Choose a different one.');
       }
 
       setSearching(false);
@@ -79,9 +79,9 @@ export function UpdateUsername(): JSX.Element {
       setInputValue('');
       setVisited(false);
       setAvailable(false);
-      toast.success('Username updated successfully');
+      toast.success('Your username was changed');
     } catch (error) {
-      toast.error('Failed to update username. Please try again.');
+      toast.error('Your username could not be changed. Try again.');
     } finally {
       setLoading(false);
     }
@@ -127,8 +127,8 @@ export function UpdateUsername(): JSX.Element {
                    dark:active:bg-dark-primary/20'
         onClick={openModal}
       >
-        <HeroIcon className='h-5 w-5' iconName='SparklesIcon' />
-        <ToolTip tip='Top tweets' />
+        <HeroIcon className='h-5 w-5' iconName='AtSymbolIcon' />
+        <ToolTip tip='Change your username' />
       </Button>
     </>
   );

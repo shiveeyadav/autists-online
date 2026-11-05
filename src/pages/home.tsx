@@ -12,7 +12,8 @@ import { UpdateUsername } from '@components/home/update-username';
 import { MainHeader } from '@components/home/main-header';
 import { Tweet } from '@components/tweet/tweet';
 import { Loading } from '@components/ui/loading';
-import { Error } from '@components/ui/error';
+import { StatsEmpty } from '@components/tweet/stats-empty';
+import { pageTitle } from '@lib/site';
 import type { ReactElement, ReactNode } from 'react';
 
 export default function Home(): JSX.Element {
@@ -26,7 +27,7 @@ export default function Home(): JSX.Element {
 
   return (
     <MainContainer>
-      <SEO title='Home / The Alternative' />
+      <SEO title={pageTitle('Home')} />
       <MainHeader
         useMobileSidebar
         title='Home'
@@ -39,7 +40,10 @@ export default function Home(): JSX.Element {
         {loading ? (
           <Loading className='mt-5' />
         ) : !data ? (
-          <Error message='Something went wrong' />
+          <StatsEmpty
+            title='There are no posts yet'
+            description='Posts from everyone on the site are listed here, newest first. Choose “Write a post” to write the first one.'
+          />
         ) : (
           <>
             <AnimatePresence mode='popLayout'>

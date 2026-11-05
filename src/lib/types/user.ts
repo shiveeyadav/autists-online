@@ -1,4 +1,5 @@
 import type { Theme, Accent } from './theme';
+import type { CommunicationPreference } from '@lib/communication';
 import type { Timestamp, FirestoreDataConverter } from 'firebase/firestore';
 
 export type User = {
@@ -22,6 +23,14 @@ export type User = {
   coverPhotoURL: string | null;
   /** how often to email a round-up of new posts; undefined means never set */
   emailDigest?: EmailDigestFrequency;
+  /** Communication preferences shown on the profile. Missing on old profiles. */
+  commPrefs?: CommunicationPreference[];
+  /**
+   * false for new accounts until they have seen /welcome. Missing (undefined)
+   * on accounts created before the welcome page existed, which are not sent
+   * there.
+   */
+  welcomed?: boolean;
 };
 
 export type EmailDigestFrequency = 'off' | 'daily' | 'weekly';

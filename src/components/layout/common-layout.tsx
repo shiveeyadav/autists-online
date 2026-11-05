@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { useRequireAuth } from '@lib/hooks/useRequireAuth';
 import { Aside } from '@components/aside/aside';
-import { AsideTrends } from '@components/aside/aside-trends';
+import { AsideAbout } from '@components/aside/aside-about';
 import { Suggestions } from '@components/aside/suggestions';
 import { Placeholder } from '@components/common/placeholder';
 import type { ReactNode } from 'react';
@@ -11,8 +13,17 @@ export type LayoutProps = {
 
 export function ProtectedLayout({ children }: LayoutProps): JSX.Element {
   const user = useRequireAuth();
+  const { replace } = useRouter();
 
-  if (!user) return <Placeholder />;
+  // New accounts see the welcome page once before anything else.
+  const needsWelcome = user?.welcomed === false;
+
+  useEffect(() => {
+    if (needsWelcome) void replace('/welcome');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [needsWelcome]);
+
+  if (!user || needsWelcome) return <Placeholder />;
 
   return <>{children}</>;
 }
@@ -31,7 +42,7 @@ export function HomeLayout({ children }: LayoutProps): JSX.Element {
     <>
       {children}
       <Aside>
-        <AsideTrends />
+        <AsideAbout />
         <Suggestions />
       </Aside>
     </>
@@ -44,13 +55,14 @@ export function UserLayout({ children }: LayoutProps): JSX.Element {
       {children}
       <Aside>
         <Suggestions />
-        <AsideTrends />
+        <AsideAbout />
       </Aside>
     </>
   );
 }
 
-export function TrendsLayout({ children }: LayoutProps): JSX.Element {
+/** For the information pages (/welcome, /guidelines). */
+export function InfoLayout({ children }: LayoutProps): JSX.Element {
   return (
     <>
       {children}
@@ -66,7 +78,7 @@ export function PeopleLayout({ children }: LayoutProps): JSX.Element {
     <>
       {children}
       <Aside>
-        <AsideTrends />
+        <AsideAbout />
       </Aside>
     </>
   );

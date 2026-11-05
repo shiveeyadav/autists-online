@@ -1,8 +1,7 @@
 import { createHmac, timingSafeEqual } from 'crypto';
 import { adminDb, isAdminConfigured } from '@lib/firebase/admin';
+import { siteName, siteURL, brandColor } from '@lib/site';
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-const siteURL = process.env.NEXT_PUBLIC_URL ?? 'https://thealternative.social';
 
 function page(title: string, message: string): string {
   return `<!doctype html>
@@ -13,7 +12,7 @@ function page(title: string, message: string): string {
   <div style="max-width:440px;margin:0 auto;background:#fff;border-radius:12px;padding:32px;text-align:center">
     <h1 style="margin:0 0 8px;font-size:20px;color:#14171a">${title}</h1>
     <p style="margin:0 0 20px;color:#687684;line-height:1.5">${message}</p>
-    <a href="${siteURL}" style="display:inline-block;background:#1da1f2;color:#fff;padding:10px 20px;border-radius:9999px;text-decoration:none;font-weight:600">Go to The Alternative</a>
+    <a href="${siteURL}" style="display:inline-block;background:${brandColor};color:#fff;padding:10px 20px;border-radius:9999px;text-decoration:none;font-weight:600">Go to ${siteName}</a>
   </div>
 </body></html>`;
 }
@@ -79,7 +78,7 @@ export default async function handler(
     .status(200)
     .send(
       page(
-        'You’re unsubscribed',
+        'You are unsubscribed',
         'You will no longer receive round-up emails. You can turn them back on any time from your notifications page.'
       )
     );

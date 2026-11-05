@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Menu } from '@headlessui/react';
 import cn from 'clsx';
 import { useAuth } from '@lib/context/auth-context';
+import { siteName } from '@lib/site';
 import { useModal } from '@lib/hooks/useModal';
 import { Modal } from '@components/modal/modal';
 import { ActionModal } from '@components/modal/action-modal';
@@ -30,9 +31,9 @@ export function SidebarProfile(): JSX.Element {
         <ActionModal
           useIcon
           focusOnMainBtn
-          title='Log out of The Alternative?'
-          description='You can always log back in at any time. If you just want to switch accounts, you can do that by adding an existing account.'
-          mainBtnLabel='Log out'
+          title={`Sign out of ${siteName}?`}
+          description='You can sign in again at any time. Your posts and settings are kept.'
+          mainBtnLabel='Sign out'
           action={signOut}
           closeModal={closeModal}
         />
@@ -98,7 +99,7 @@ export function SidebarProfile(): JSX.Element {
                         onClick={openModal}
                       >
                         <HeroIcon iconName='ArrowRightOnRectangleIcon' />
-                        Log out @{username}
+                        Sign out @{username}
                       </Button>
                     )}
                   </Menu.Item>

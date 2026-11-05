@@ -6,6 +6,7 @@ import { tweetsCollection } from '@lib/firebase/collections';
 import { useCollection } from '@lib/hooks/useCollection';
 import { useDocument } from '@lib/hooks/useDocument';
 import { isPlural } from '@lib/utils';
+import { siteName, pageTitle } from '@lib/site';
 import { HomeLayout, PublicLayout } from '@components/layout/common-layout';
 import { MainLayout } from '@components/layout/main-layout';
 import { MainContainer } from '@components/home/main-container';
@@ -24,6 +25,7 @@ type TweetPreview = {
   authorName: string;
   authorUsername: string;
   image: string | null;
+  contentWarning: string | null;
 };
 
 /**
@@ -58,6 +60,7 @@ export const getServerSideProps: GetServerSideProps<{
       text?: string | null;
       createdBy?: string;
       images?: { src: string }[] | null;
+      contentWarning?: string | null;
     };
 
     const author = (
@@ -70,7 +73,8 @@ export const getServerSideProps: GetServerSideProps<{
           text: data.text ?? null,
           authorName: author?.name ?? 'Someone',
           authorUsername: author?.username ?? 'unknown',
-          image: data.images?.[0]?.src ?? null
+          image: data.images?.[0]?.src ?? null,
+          contentWarning: data.contentWarning ?? null
         }
       }
     };
@@ -112,9 +116,13 @@ export default function TweetId({
   const parentId = tweetData?.parent?.id;
 
   const pageTitle = tweetData
-    ? `${tweetData.user.name} on The Alternative: "${text ?? ''}${
+    ? `${tweetData.user.name} on ${siteName}: "${
+        tweetData.contentWarning
+          ? `Content warning: ${tweetData.contentWarning}`
+          : text ?? ''
+      }${
         images ? ` (${imagesLength} image${isPlural(imagesLength)})` : ''
-      }" / The Alternative`
+      }" / ${siteName}`
     : null;
 
   return (
@@ -123,11 +131,17 @@ export default function TweetId({
           immediately rather than waiting on a client-side Firestore read. */}
       {preview && (
         <SEO
-          title={`${preview.authorName} on The Alternative: "${
-            preview.text ?? ''
-          }" / The Alternative`}
-          description={preview.text ?? `A post by @${preview.authorUsername}`}
-          image={preview.image ?? undefined}
+          title={`${preview.authorName} on ${siteName}: "${
+            preview.contentWarning
+              ? `Content warning: ${preview.contentWarning}`
+              : preview.text ?? ''
+          }" / ${siteName}`}
+          description={
+            preview.contentWarning
+              ? `A post by @${preview.authorUsername} with a content warning: ${preview.contentWarning}`
+              : preview.text ?? `A post by @${preview.authorUsername}`
+          }
+          image={preview.contentWarning ? undefined : preview.image ?? undefined}
         />
       )}
       <MainHeader
@@ -140,8 +154,8 @@ export default function TweetId({
           <Loading className='mt-5' />
         ) : !tweetData ? (
           <>
-            {!preview && <SEO title='Post not found / The Alternative' />}
-            <Error message='Post not found' />
+            {!preview && <SEO title={pageTitle('Post not found')} />}
+            <Error message='This post does not exist. It may have been deleted.' />
           </>
         ) : (
           <>

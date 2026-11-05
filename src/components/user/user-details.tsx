@@ -1,4 +1,5 @@
 import { formatDate } from '@lib/date';
+import { getCommunicationLabel } from '@lib/communication';
 import { HeroIcon } from '@components/ui/hero-icon';
 import { ToolTip } from '@components/ui/tooltip';
 import { UserName } from './user-name';
@@ -19,6 +20,7 @@ type UserDetailsProps = Pick<
   | 'createdAt'
   | 'following'
   | 'followers'
+  | 'commPrefs'
 >;
 
 type DetailIcon = [string | null, IconName];
@@ -33,8 +35,13 @@ export function UserDetails({
   verified,
   createdAt,
   following,
-  followers
+  followers,
+  commPrefs
 }: UserDetailsProps): JSX.Element {
+  const commLabels = (commPrefs ?? [])
+    .map((id) => getCommunicationLabel(id))
+    .filter((label): label is string => !!label);
+
   const detailIcons: Readonly<DetailIcon[]> = [
     [location, 'MapPinIcon'],
     [website, 'LinkIcon'],
@@ -90,6 +97,24 @@ export function UserDetails({
           )}
         </div>
       </div>
+      {!!commLabels.length && (
+        <section aria-labelledby={`comm-prefs-${id}`}>
+          <h3 id={`comm-prefs-${id}`} className='mb-2 text-sm font-bold'>
+            Communication preferences
+          </h3>
+          <ul className='flex flex-wrap gap-2'>
+            {commLabels.map((label) => (
+              <li
+                className='rounded-full border border-light-border px-3 py-1 text-sm
+                           dark:border-dark-border'
+                key={label}
+              >
+                {label}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       <UserFollowStats following={following} followers={followers} />
     </>
   );

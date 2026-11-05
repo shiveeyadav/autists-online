@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useAuth } from '@lib/context/auth-context';
+import { siteName } from '@lib/site';
 import { useModal } from '@lib/hooks/useModal';
 import { Button } from '@components/ui/button';
 import { UserAvatar } from '@components/user/user-avatar';
@@ -19,11 +20,6 @@ export type MobileNavLink = Omit<NavLink, 'canBeHidden'>;
 
 const topNavLinks: Readonly<MobileNavLink[]> = [
   {
-    href: '/trends',
-    linkName: 'Topics',
-    iconName: 'ChatBubbleBottomCenterTextIcon'
-  },
-  {
     href: '/bookmarks',
     linkName: 'Bookmarks',
     iconName: 'BookmarkIcon'
@@ -35,8 +31,18 @@ const topNavLinks: Readonly<MobileNavLink[]> = [
   },
   {
     href: '/people',
-    linkName: 'The Alternative Circle',
+    linkName: 'People',
     iconName: 'UserGroupIcon'
+  },
+  {
+    href: '/guidelines',
+    linkName: 'Guidelines',
+    iconName: 'BookOpenIcon'
+  },
+  {
+    href: '/welcome',
+    linkName: 'Welcome page',
+    iconName: 'InformationCircleIcon'
   }
 ];
 
@@ -93,8 +99,8 @@ export function MobileSidebarModal({
   return (
     <>
       <Modal
-        className='items-center justify-center xs:flex'
-        modalClassName='max-w-xl bg-main-background w-full p-8 rounded-2xl hover-animation'
+        className='items-start justify-center xs:flex'
+        modalClassName='max-w-xl bg-main-background w-full p-8 rounded-2xl hover-animation my-8'
         open={displayOpen}
         closeModal={displayCloseModal}
       >
@@ -108,9 +114,9 @@ export function MobileSidebarModal({
         <ActionModal
           useIcon
           focusOnMainBtn
-          title='Log out of The Alternative?'
-          description='You can always log back in at any time. If you just want to switch accounts, you can do that by adding an existing account.'
-          mainBtnLabel='Log out'
+          title={`Sign out of ${siteName}?`}
+          description='You can sign in again at any time. Your posts and settings are kept.'
+          mainBtnLabel='Sign out'
           action={signOut}
           closeModal={logOutCloseModal}
         />
@@ -198,8 +204,8 @@ export function MobileSidebarModal({
                          dark:hover:bg-dark-primary/10 dark:focus-visible:ring-white'
               onClick={displayOpenModal}
             >
-              <HeroIcon className='h-5 w-5' iconName='PaintBrushIcon' />
-              Display
+              <HeroIcon className='h-5 w-5' iconName='AdjustmentsHorizontalIcon' />
+              Display and comfort
             </Button>
             <Button
               className='accent-tab accent-bg-tab flex items-center gap-2 rounded-md p-1.5 font-bold transition
@@ -211,7 +217,7 @@ export function MobileSidebarModal({
                 className='h-5 w-5'
                 iconName='ArrowRightOnRectangleIcon'
               />
-              Log out
+              Sign out
             </Button>
           </nav>
         </div>

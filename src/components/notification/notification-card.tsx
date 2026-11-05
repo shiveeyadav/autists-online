@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import cn from 'clsx';
+import { defaultAvatar } from '@lib/site';
 import { UserAvatar } from '@components/user/user-avatar';
 import { HeroIcon } from '@components/ui/hero-icon';
 import type { Notification } from '@lib/types/notification';
@@ -62,7 +63,7 @@ export function NotificationCard({
         </i>
         <div className='flex flex-col gap-1'>
           <UserAvatar
-            src={user?.photoURL ?? '/assets/twitter-avatar.jpg'}
+            src={user?.photoURL ?? defaultAvatar}
             alt={user?.name ?? 'User'}
             size={32}
           />

@@ -24,7 +24,8 @@ export function MoreSettings(): JSX.Element {
   return (
     <>
       <Modal
-        modalClassName='max-w-xl bg-main-background w-full p-8 rounded-2xl hover-animation'
+        className='flex items-start justify-center'
+        modalClassName='max-w-xl bg-main-background w-full p-8 rounded-2xl hover-animation my-8'
         open={open}
         closeModal={closeModal}
       >
@@ -66,8 +67,8 @@ export function MoreSettings(): JSX.Element {
                         )}
                         onClick={openModal}
                       >
-                        <HeroIcon iconName='PaintBrushIcon' />
-                        Display
+                        <HeroIcon iconName='AdjustmentsHorizontalIcon' />
+                        Display and comfort
                       </Button>
                     )}
                   </Menu.Item>

@@ -11,10 +11,6 @@ module.exports = {
       ...defaultTheme.screens
     },
     extend: {
-      fontFamily: {
-        'twitter-chirp': ['TwitterChirp', 'sans-serif'],
-        'twitter-chirp-extended': ['TwitterChirpExtendedHeavy', 'sans-serif']
-      },
       // prettier-ignore
       colors: {
         'main-primary': 'rgb(var(--main-primary) / <alpha-value>)',
@@ -38,7 +34,7 @@ module.exports = {
         'light-border': '#EFF3F4',
         'dark-line-reply': '#333639',
         'light-line-reply': '#CFD9DE',
-        'twitter-icon': '#D6D9DB',
+        'brand': '#3F7A80',
         'image-preview-hover': '#272C30',
       }
     }

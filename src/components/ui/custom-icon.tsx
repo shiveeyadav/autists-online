@@ -12,11 +12,9 @@ type CustomIconProps = IconProps & {
 
 const Icons = {
   PinIcon,
-  AppleIcon,
+  LogoIcon,
   PinOffIcon,
   GoogleIcon,
-  TwitterIcon,
-  FeatherIcon,
   SpinnerIcon,
   TriangleIcon
 };
@@ -30,31 +28,24 @@ export function CustomIcon({
   return <Icon className={className ?? 'h-6 w-6'} />;
 }
 
-function TwitterIcon({ className }: IconProps): JSX.Element {
+/**
+ * The Autists Online mark: an infinity loop (a common neurodiversity
+ * symbol) drawn as a single stroke. Uses currentColor, so it follows the
+ * text colour it is placed in.
+ */
+function LogoIcon({ className }: IconProps): JSX.Element {
   return (
     <svg
-      className={cn('fill-current', className)}
-      viewBox='0 0 24 24'
-      aria-label='The Alternative'
-    >
-      <path
-        fillRule='evenodd'
-        d='M12 2L1 22h5.5l1.7-4h7.6l1.7 4H23L12 2zm0 5.5 2.6 7.5H9.4L12 7.5z'
-      />
-    </svg>
-  );
-}
-
-function FeatherIcon({ className }: IconProps): JSX.Element {
-  return (
-    <svg
-      className={cn('fill-current', className)}
+      className={cn('fill-none stroke-current', className)}
       viewBox='0 0 24 24'
       aria-hidden='true'
     >
-      <g>
-        <path d='M23 3c-6.62-.1-10.38 2.421-13.05 6.03C7.29 12.61 6 17.331 6 22h2c0-1.007.07-2.012.19-3H12c4.1 0 7.48-3.082 7.94-7.054C22.79 10.147 23.17 6.359 23 3zm-7 8h-1.5v2H16c.63-.016 1.2-.08 1.72-.188C16.95 15.24 14.68 17 12 17H8.55c.57-2.512 1.57-4.851 3-6.78 2.16-2.912 5.29-4.911 9.45-5.187C20.95 8.079 19.9 11 16 11zM4 9V6H1V4h3V1h2v3h3v2H6v3H4z' />
-      </g>
+      <path
+        d='M12 12c-1.4-2.3-2.4-3.5-3.8-3.5a3.5 3.5 0 0 0 0 7c1.4 0 2.4-1.2 3.8-3.5s2.4-3.5 3.8-3.5a3.5 3.5 0 0 1 0 7c-1.4 0-2.4-1.2-3.8-3.5z'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
     </svg>
   );
 }
@@ -110,16 +101,6 @@ function GoogleIcon({ className }: IconProps): JSX.Element {
           d='M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z'
         />
         <path fill='none' d='M0 0h48v48H0z' />
-      </g>
-    </svg>
-  );
-}
-
-function AppleIcon({ className }: IconProps): JSX.Element {
-  return (
-    <svg className={className} viewBox='0 0 24 24'>
-      <g>
-        <path d='M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.572-2.27 1.206-2.98.804-.94 2.142-1.64 3.248-1.68.03.13.05.28.05.43zm4.565 15.71c-.03.07-.463 1.58-1.518 3.12-.945 1.34-1.94 2.71-3.43 2.71-1.517 0-1.9-.88-3.63-.88-1.698 0-2.302.91-3.67.91-1.377 0-2.332-1.26-3.428-2.8-1.287-1.82-2.323-4.63-2.323-7.28 0-4.28 2.797-6.55 5.552-6.55 1.448 0 2.675.95 3.6.95.865 0 2.222-1.01 3.902-1.01.613 0 2.886.06 4.374 2.19-.13.09-2.383 1.37-2.383 4.19 0 3.26 2.854 4.42 2.955 4.45z' />
       </g>
     </svg>
   );

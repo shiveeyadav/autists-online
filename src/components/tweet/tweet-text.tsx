@@ -52,7 +52,7 @@ function YoutubeEmbed({ videoId, url }: YoutubeEmbedProps): JSX.Element {
       <iframe
         src={`https://www.youtube.com/embed/${videoId}`}
         className='aspect-video w-full'
-        allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+        allow='clipboard-write; encrypted-media; picture-in-picture'
         allowFullScreen
         sandbox='allow-scripts allow-same-origin allow-presentation'
         title={title ?? 'YouTube video'}

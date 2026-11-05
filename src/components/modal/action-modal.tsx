@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react';
 import cn from 'clsx';
 import { Dialog } from '@headlessui/react';
 import { Button } from '@components/ui/button';
-import { CustomIcon } from '@components/ui/custom-icon';
+import { Logo } from '@components/brand/logo';
 
 type ActionModalProps = {
   title: string;
@@ -43,10 +43,7 @@ export function ActionModal({
       <div className='flex flex-col gap-4'>
         {useIcon && (
           <i className='mx-auto'>
-            <CustomIcon
-              className='h-10 w-10 text-accent-blue dark:text-twitter-icon'
-              iconName='TwitterIcon'
-            />
+            <Logo iconClassName='h-10 w-10' />
           </i>
         )}
         <div className='flex flex-col gap-2'>

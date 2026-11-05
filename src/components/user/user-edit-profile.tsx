@@ -6,12 +6,14 @@ import { useModal } from '@lib/hooks/useModal';
 import { updateUserData, uploadImages } from '@lib/firebase/utils';
 import { sleep } from '@lib/utils';
 import { getImagesData } from '@lib/validation';
+import { communicationPreferences } from '@lib/communication';
 import { Modal } from '@components/modal/modal';
 import { EditProfileModal } from '@components/modal/edit-profile-modal';
 import { Button } from '@components/ui/button';
 import { InputField } from '@components/input/input-field';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 import type { FilesWithId } from '@lib/types/file';
+import type { CommunicationPreference } from '@lib/communication';
 import type { User, EditableData, EditableUserData } from '@lib/types/user';
 import type { InputFieldProps } from '@components/input/input-field';
 
@@ -39,8 +41,12 @@ export function UserEditProfile({ hide }: UserEditProfileProps): JSX.Element {
 
   const [loading, setLoading] = useState(false);
 
-  const { bio, name, website, location, photoURL, coverPhotoURL } =
+  const { bio, name, website, location, photoURL, coverPhotoURL, commPrefs } =
     user as User;
+
+  const [editCommPrefs, setEditCommPrefs] = useState<CommunicationPreference[]>(
+    commPrefs ?? []
+  );
 
   const [editUserData, setEditUserData] = useState<EditableUserData>({
     bio,
@@ -102,7 +108,7 @@ export function UserEditProfile({ hide }: UserEditProfileProps): JSX.Element {
 
     await sleep(500);
 
-    await updateUserData(userId, newUserData);
+    await updateUserData(userId, { ...newUserData, commPrefs: editCommPrefs });
 
     closeModal();
 
@@ -111,7 +117,7 @@ export function UserEditProfile({ hide }: UserEditProfileProps): JSX.Element {
     setLoading(false);
     setEditUserData(newUserData);
 
-    toast.success('Profile updated successfully');
+    toast.success('Your profile was saved');
   };
 
   const editImage =
@@ -170,7 +176,7 @@ export function UserEditProfile({ hide }: UserEditProfileProps): JSX.Element {
     });
   };
 
-  const resetUserEditData = (): void =>
+  const resetUserEditData = (): void => {
     setEditUserData({
       bio,
       name,
@@ -179,6 +185,17 @@ export function UserEditProfile({ hide }: UserEditProfileProps): JSX.Element {
       location,
       coverPhotoURL
     });
+    setEditCommPrefs(commPrefs ?? []);
+  };
+
+  const toggleCommPref =
+    (id: CommunicationPreference) =>
+    ({ target: { checked } }: ChangeEvent<HTMLInputElement>): void =>
+      setEditCommPrefs(
+        checked
+          ? [...editCommPrefs.filter((pref) => pref !== id), id]
+          : editCommPrefs.filter((pref) => pref !== id)
+      );
 
   const handleChange =
     (key: EditableData) =>
@@ -254,6 +271,26 @@ export function UserEditProfile({ hide }: UserEditProfileProps): JSX.Element {
               key={inputData.inputId}
             />
           ))}
+          <fieldset className='flex flex-col gap-2'>
+            <legend className='mb-1 font-bold'>
+              Communication preferences
+            </legend>
+            <p className='mb-1 text-sm text-light-secondary dark:text-dark-secondary'>
+              These are shown on your profile so other people know how you like
+              to communicate. Choose as many as you want, or none.
+            </p>
+            {communicationPreferences.map(({ id, label }) => (
+              <label className='flex cursor-pointer items-start gap-3' key={id}>
+                <input
+                  className='mt-1 h-5 w-5 shrink-0 accent-main-accent'
+                  type='checkbox'
+                  checked={editCommPrefs.includes(id)}
+                  onChange={toggleCommPref(id)}
+                />
+                <span>{label}</span>
+              </label>
+            ))}
+          </fieldset>
         </EditProfileModal>
       </Modal>
       <Button

@@ -37,20 +37,20 @@ export function TweetShare({
         type === 'bookmark'
           ? (): JSX.Element => (
               <span className='flex gap-2'>
-                Tweet added to your Bookmarks
+                Post saved to your bookmarks
                 <Link href='/bookmarks'>
                   <a className='custom-underline font-bold'>View</a>
                 </Link>
               </span>
             )
-          : 'Tweet removed from your bookmarks'
+          : 'Post removed from your bookmarks'
       );
     };
 
   const handleCopy = (closeMenu: () => void) => async (): Promise<void> => {
     closeMenu();
     await navigator.clipboard.writeText(`${siteURL}/tweet/${tweetId}`);
-    toast.success('Copied to clipboard');
+    toast.success('Link copied');
   };
 
   const tweetIsBookmarked = !!userBookmarks?.some(({ id }) => id === tweetId);
@@ -92,7 +92,7 @@ export function TweetShare({
                   onClick={preventBubbling(handleCopy(close))}
                 >
                   <HeroIcon iconName='LinkIcon' />
-                  Copy link to Tweet
+                  Copy link to post
                 </Popover.Button>
                 {!userId ? null : !tweetIsBookmarked ? (
                   <Popover.Button
@@ -103,7 +103,7 @@ export function TweetShare({
                     )}
                   >
                     <HeroIcon iconName='BookmarkIcon' />
-                    Bookmark
+                    Save to bookmarks
                   </Popover.Button>
                 ) : (
                   <Popover.Button
@@ -114,7 +114,7 @@ export function TweetShare({
                     )}
                   >
                     <HeroIcon iconName='BookmarkSlashIcon' />
-                    Remove Tweet from Bookmarks
+                    Remove post from bookmarks
                   </Popover.Button>
                 )}
               </Popover.Panel>

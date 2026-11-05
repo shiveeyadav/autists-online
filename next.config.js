@@ -5,6 +5,17 @@ const nextConfig = {
   images: {
     unoptimized: true
   },
+  async redirects() {
+    return [
+      // pages and files from the code this site was built from
+      { source: '/trends', destination: '/people', permanent: false },
+      {
+        source: '/assets/twitter-avatar.jpg',
+        destination: '/assets/default-avatar.svg',
+        permanent: true
+      }
+    ];
+  },
   async headers() {
     return [
       {
@@ -24,7 +35,7 @@ const nextConfig = {
               "img-src 'self' data: blob: https: http:",
               "media-src 'self' blob: https:",
               "frame-src https://www.youtube.com https://youtube.com https://*.firebaseapp.com",
-              "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com wss://*.firebaseio.com https://api.twitter.com https://www.youtube.com",
+              "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com wss://*.firebaseio.com https://www.youtube.com",
               "font-src 'self'",
               "object-src 'none'",
               "base-uri 'self'"

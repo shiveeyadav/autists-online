@@ -30,6 +30,7 @@ import {
 } from '@lib/firebase/collections';
 import { getRandomId, getRandomInt } from '@lib/random';
 import { checkUsernameAvailability } from '@lib/firebase/utils';
+import { defaultAvatar } from '@lib/site';
 import type { ReactNode } from 'react';
 import type { User as AuthUser } from 'firebase/auth';
 import type { WithFieldValue } from 'firebase/firestore';
@@ -102,7 +103,7 @@ export function AuthContextProvider({
         accent: null,
         website: null,
         location: null,
-        photoURL: photoURL ?? '/assets/twitter-avatar.jpg',
+        photoURL: photoURL ?? defaultAvatar,
         username: randomUsername,
         verified: false,
         following: [],
@@ -112,7 +113,9 @@ export function AuthContextProvider({
         totalTweets: 0,
         totalPhotos: 0,
         pinnedTweet: null,
-        coverPhotoURL: null
+        coverPhotoURL: null,
+        commPrefs: [],
+        welcomed: false
       };
 
       const userStatsData: WithFieldValue<Stats> = {

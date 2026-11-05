@@ -24,6 +24,7 @@ import { Button } from '@components/ui/button';
 import { ToolTip } from '@components/ui/tooltip';
 import { HeroIcon } from '@components/ui/hero-icon';
 import { Loading } from '@components/ui/loading';
+import { pageTitle } from '@lib/site';
 import type { ReactElement, ReactNode } from 'react';
 
 export default function Bookmarks(): JSX.Element {
@@ -52,23 +53,23 @@ export default function Bookmarks(): JSX.Element {
   const handleClear = async (): Promise<void> => {
     await clearAllBookmarks(userId);
     closeModal();
-    toast.success('Successfully cleared all bookmarks');
+    toast.success('All bookmarks were removed');
   };
 
   return (
     <MainContainer>
-      <SEO title='Bookmarks / The Alternative' />
+      <SEO title={pageTitle('Bookmarks')} />
       <Modal
         modalClassName='max-w-xs bg-main-background w-full p-8 rounded-2xl'
         open={open}
         closeModal={closeModal}
       >
         <ActionModal
-          title='Clear all Bookmarks?'
-          description='This can’t be undone and you’ll remove all Tweets you’ve added to your Bookmarks.'
+          title='Remove all bookmarks?'
+          description='All posts will be removed from your bookmarks. The posts themselves are not deleted. This cannot be undone.'
           mainBtnClassName='bg-accent-red hover:bg-accent-red/90 active:bg-accent-red/75 accent-tab 
                             focus-visible:bg-accent-red/90'
-          mainBtnLabel='Clear'
+          mainBtnLabel='Remove all'
           action={handleClear}
           closeModal={closeModal}
         />
@@ -89,18 +90,17 @@ export default function Bookmarks(): JSX.Element {
           <HeroIcon className='h-5 w-5' iconName='ArchiveBoxXMarkIcon' />
           <ToolTip
             className='!-translate-x-20 translate-y-3 md:-translate-x-1/2'
-            tip='Clear bookmarks'
+            tip='Remove all bookmarks'
           />
         </Button>
       </MainHeader>
       <section className='mt-0.5'>
         {bookmarksRefLoading || tweetLoading ? (
           <Loading className='mt-5' />
-        ) : !bookmarksRef ? (
+        ) : !bookmarksRef?.length ? (
           <StatsEmpty
-            title='Save Tweets for later'
-            description='Don’t let the good ones fly away! Bookmark Tweets to easily find them again in the future.'
-            imageData={{ src: '/assets/no-bookmarks.png', alt: 'No bookmarks' }}
+            title='You have no bookmarks'
+            description='To save a post for later, open the share menu on the post and choose “Save to bookmarks”. Saved posts are listed here.'
           />
         ) : (
           <AnimatePresence mode='popLayout'>

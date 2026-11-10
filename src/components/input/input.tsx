@@ -89,10 +89,22 @@ export function Input({
 
     const userId = user?.id as string;
 
+    let images: Awaited<ReturnType<typeof uploadImages>>;
+
+    try {
+      images = await uploadImages(userId, selectedImages);
+    } catch (error) {
+      setLoading(false);
+      toast.error(
+        error instanceof Error ? error.message : 'Upload failed, try again'
+      );
+      return;
+    }
+
     const tweetData: WithFieldValue<Omit<Tweet, 'id'>> = {
       text: inputValue.trim() || null,
       parent: isReplying && parent ? parent : null,
-      images: await uploadImages(userId, selectedImages),
+      images,
       userLikes: [],
       createdBy: userId,
       createdAt: serverTimestamp(),

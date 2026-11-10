@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env.production
+    environment:
+      NODE_ENV: production
+      MEDIA_DIR: /app/data/media
+    volumes:
+      # uploaded profile pictures and post images (instead of Firebase Storage)
+      - autists_media:/app/data/media
+    ports:
+      - "127.0.0.1:${HOST_PORT:-3050}:3000"
+
+volumes:
+  autists_media:

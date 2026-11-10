@@ -76,9 +76,20 @@ export function UserEditProfile({ hide }: UserEditProfileProps): JSX.Element {
 
     const { photoURL, coverPhotoURL: coverURL } = userImages;
 
-    const [newPhotoURL, newCoverPhotoURL] = await Promise.all(
-      [photoURL, coverURL].map((image) => uploadImages(userId, image))
-    );
+    let newPhotoURL: Awaited<ReturnType<typeof uploadImages>>;
+    let newCoverPhotoURL: Awaited<ReturnType<typeof uploadImages>>;
+
+    try {
+      [newPhotoURL, newCoverPhotoURL] = await Promise.all(
+        [photoURL, coverURL].map((image) => uploadImages(userId, image))
+      );
+    } catch (error) {
+      setLoading(false);
+      toast.error(
+        error instanceof Error ? error.message : 'Upload failed, try again'
+      );
+      return;
+    }
 
     const newImages: Partial<Pick<User, 'photoURL' | 'coverPhotoURL'>> = {
       coverPhotoURL:

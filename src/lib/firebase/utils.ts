@@ -15,8 +15,7 @@ import {
   serverTimestamp,
   getCountFromServer
 } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { db, auth, storage } from './app';
+import { db, auth } from './app';
 import {
   usersCollection,
   tweetsCollection,
@@ -302,23 +301,47 @@ export async function removeTweet(tweetId: string): Promise<void> {
   await deleteDoc(userRef);
 }
 
+/**
+ * Uploads images/videos to our own server (see pages/api/upload.ts) instead
+ * of Firebase Storage. Returns the same shape as before, so the rest of the
+ * app (posts, profile photo and cover) is unchanged.
+ */
 export async function uploadImages(
   userId: string,
   files: FilesWithId
 ): Promise<ImagesPreview | null> {
   if (!files.length) return null;
 
+  const user = auth.currentUser;
+
+  if (!user || user.uid !== userId)
+    throw new Error('You need to be signed in to upload images');
+
+  const idToken = await user.getIdToken();
+
   const imagesPreview = await Promise.all(
     files.map(async (file) => {
       const { id, name: alt, type } = file;
 
-      const storageRef = ref(storage, `images/${userId}/${id}`);
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          'Content-Type': type || 'application/octet-stream',
+          'X-File-Id': id
+        },
+        body: file
+      });
 
-      await uploadBytesResumable(storageRef, file);
+      const data = (await response.json().catch(() => ({}))) as {
+        src?: string;
+        error?: string;
+      };
 
-      const src = await getDownloadURL(storageRef);
+      if (!response.ok || !data.src)
+        throw new Error(data.error ?? 'Upload failed, try again');
 
-      return { id, src, alt, type };
+      return { id, src: data.src, alt, type };
     })
   );
 

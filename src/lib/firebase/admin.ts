@@ -20,8 +20,10 @@ export function isAdminConfigured(): boolean {
 }
 
 function getAdminApp(): App {
-  const existing = getApps();
-  if (existing.length) return existing[0];
+  // only the default app carries the service account; named apps (such as the
+  // token-only one in lib/media-store.ts) must not be picked up here
+  const existing = getApps().find((app) => app.name === '[DEFAULT]');
+  if (existing) return existing;
 
   const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
 

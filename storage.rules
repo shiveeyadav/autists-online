@@ -2,8 +2,7 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     function isAdmin() {
-      return request.auth.uid == 'he4x6yM1tVS6LZC9B2c7VlfyZog1'
-          || request.auth.uid == 'DiaHTyY0mybaE8LkCruJtweXsQA2';
+      return request.auth.uid == 'REPLACE_WITH_ADMIN_UID';
     }
 
     function isAuthorized(userId) {

@@ -115,7 +115,7 @@ export default function TweetId({
   const imagesLength = images?.length ?? 0;
   const parentId = tweetData?.parent?.id;
 
-  const pageTitle = tweetData
+  const tweetPageTitle = tweetData
     ? `${tweetData.user.name} on ${siteName}: "${
         tweetData.contentWarning
           ? `Content warning: ${tweetData.contentWarning}`
@@ -159,7 +159,7 @@ export default function TweetId({
           </>
         ) : (
           <>
-            {!preview && pageTitle && <SEO title={pageTitle} />}
+            {!preview && tweetPageTitle && <SEO title={tweetPageTitle} />}
             {parentId && (
               <ViewParentTweet
                 parentId={parentId}

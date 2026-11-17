@@ -1,3 +1,4 @@
+import { emailForUser } from '@lib/firebase/user-email';
 import { createTransport } from 'nodemailer';
 import { createHmac } from 'crypto';
 import { adminAuth, adminDb, isAdminConfigured } from '@lib/firebase/admin';
@@ -302,13 +303,7 @@ export default async function handler(
 
     if (!theirPosts.length) continue;
 
-    let email: string | undefined;
-
-    try {
-      email = (await adminAuth().getUser(userId)).email;
-    } catch {
-      continue; // deleted from Auth but left in Firestore
-    }
+    const email = await emailForUser(adminAuth(), db, userId);
 
     if (!email) continue;
 

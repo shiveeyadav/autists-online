@@ -8,6 +8,7 @@ import {
 } from 'react';
 import {
   signInWithPopup,
+  getAdditionalUserInfo,
   GoogleAuthProvider,
   onAuthStateChanged,
   signOut as signOutFirebase,
@@ -29,7 +30,7 @@ import {
   userBookmarksCollection
 } from '@lib/firebase/collections';
 import { getRandomId, getRandomInt } from '@lib/random';
-import { checkUsernameAvailability } from '@lib/firebase/utils';
+import { checkUsernameAvailability, saveContactEmail } from '@lib/firebase/utils';
 import { defaultAvatar } from '@lib/site';
 import type { ReactNode } from 'react';
 import type { User as AuthUser } from 'firebase/auth';
@@ -184,7 +185,16 @@ export function AuthContextProvider({
   const signInWithGoogle = async (): Promise<void> => {
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      provider.addScope('email');
+      const result = await signInWithPopup(auth, provider);
+
+      // Some Google accounts come back with no email on the Auth record. Keep
+      // the address Google sent so the email round-up can reach them.
+      const hasEmail =
+        result.user.email || result.user.providerData.some((p) => p.email);
+      const profileEmail = getAdditionalUserInfo(result)?.profile?.email;
+      if (!hasEmail && typeof profileEmail === 'string' && profileEmail)
+        void saveContactEmail(result.user.uid, profileEmail).catch(() => undefined);
     } catch (err) {
       setError(err as Error);
     }
